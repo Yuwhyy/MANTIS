@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> MANTIS — Teman Rintis </title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Dev Demo Switcher 
+  <div class="dev-switcher">
+    <span class="dev-label">DEV PREVIEW SWITCHER:</span>
+    <button class="dev-btn active" onclick="switchView('home')">1. Beranda</button>
+    <button class="dev-btn" onclick="switchView('browse')">2. Cari Proyek</button>
+    <button class="dev-btn" onclick="switchView('post')">3. Pasang Proyek</button>
+    <button class="dev-btn" onclick="switchView('detail')">4. Detail Proyek</button>
+    <button class="dev-btn" onclick="switchView('dashboard-klien')">5. Dash Klien</button>
+    <button class="dev-btn" onclick="switchView('dashboard-freelancer')">6. Dash Freelancer</button>
+    <button class="dev-btn" onclick="switchView('dashboard-admin')">7. Dash Admin</button>
+    <button class="dev-btn" onclick="openModal('login')">Modal Login</button>
+    <button class="dev-btn" onclick="openModal('register-klien')">Modal Reg Klien</button>
+    <button class="dev-btn" onclick="openModal('register-freelancer')">Modal Reg Freelancer</button>
+  </div> -->
+
+  <!-- Header / Navbar -->
+  <header class="navbar-wrapper">
+    <div class="navbar container">
+      <div class="nav-left">
+        <div class="logo-badge" onclick="switchView('home')">MT</div>
+        <button class="nav-brand-btn" onclick="switchView('home')">MANTIS</button>
+      </div>
+
+      <nav class="nav-center">
+        <button class="nav-link active" id="nav-home" onclick="switchView('home')">Beranda</button>
+        <button class="nav-link" id="nav-browse" onclick="switchView('browse')">Cari proyek</button>
+        <button class="nav-link btn-post-nav" id="nav-post" onclick="switchView('post')">Pasang proyek</button>
+      </nav>
+
+      <!-- Tombol Masuk dan Daftar Terpisah -->
+      <div class="nav-right" id="nav-user-area">
+        <!-- Tampilan Saat Belum Login -->
+        <div id="auth-buttons-group" class="auth-btn-group">
+          <button class="btn-login-pill" onclick="openModal('login')">Masuk</button>
+          <button class="btn-register-pill" onclick="openModal('register-klien')">Daftar</button>
+        </div>
+        <!-- Tampilan Saat Sudah Login -->
+        <div id="logged-user-group" class="auth-btn-group" style="display: none;">
+          <button class="btn-user-pill" id="btn-user-profile" onclick="goToUserDashboard()"></button>
+          <button class="btn-logout-pill" onclick="handleLogout()">Keluar</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT VIEWS -->
+  <main class="main-content">
+
+    <!-- 1. HOMEPAGE VIEW -->
+    <section id="view-home" class="view-section active">
+      <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-card">
+          <div class="hero-left">
+            <span class="badge-red">PLATFORM FREELANCER LOKAL</span>
+            <h1 class="hero-title">Butuh jasa digital cepat? Temukan freelancer lokal yang siap bantu UMKM dan bisnis kecil.</h1>
+            <p class="hero-sub">Pasang proyek, terima penawaran, dan kerja sama dengan talenta muda lokal dalam hitungan jam.</p>
+            <div class="hero-actions">
+              <button class="btn btn-coral" onclick="switchView('post')">Saya butuh jasa</button>
+              <button class="btn btn-navy" onclick="handleCariCuanClick()">Saya mau cari cuan</button>
+            </div>
+            <div class="hero-tags">
+              <span id="stat-hero-projects">0 proyek aktif</span> • <span id="stat-hero-users">0 pengguna</span>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="featured-preview-card">
+              <div class="card-meta">
+                <span class="badge-pink">Proyek Cepat</span>
+              </div>
+              <h3 class="preview-title" id="featured-title">Belum ada proyek</h3>
+              <p class="preview-desc" id="featured-desc">Silakan pasang proyek baru melalui form Pasang Proyek.</p>
+              <div class="preview-info-grid">
+                <div>
+                  <span class="lbl">Kategori</span>
+                  <span class="val" id="featured-cat">-</span>
+                </div>
+                <div>
+                  <span class="lbl">Budget</span>
+                  <span class="val" id="featured-budget">-</span>
+                </div>
+              </div>
+              <div class="preview-card-footer">
+                <span class="text-xs text-gray">Siap menerima penawaran</span>
+                <button class="btn btn-navy btn-sm" onclick="switchView('browse')">Lihat proyek</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-lbl">TOTAL PROYEK</span>
+            <div class="stat-num" id="stat-total-projects">0</div>
+            <p class="stat-desc">Proyek yang terdaftar di database web.</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-lbl">PENGGUNA TERDAFTAR</span>
+            <div class="stat-num" id="stat-total-users">0</div>
+            <p class="stat-desc">Akun Klien dan Freelancer yang mendaftar.</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-lbl">PENAWARAN MASUK</span>
+            <div class="stat-num" id="stat-total-bids">0</div>
+            <p class="stat-desc">Proposal yang dikirimkan oleh freelancer.</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-lbl">STATUS PLATFORM</span>
+            <div class="stat-num" style="font-size:20px; color:#065F46;">Siap Isi</div>
+            <p class="stat-desc">Data tersimpan otomatis di LocalStorage browser.</p>
+          </div>
+        </div>
+
+        <!-- Latest Projects Section -->
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Proyek cepat terbaru</h2>
+            <p class="section-sub">Daftar proyek terbaru yang diinput dari form web.</p>
+          </div>
+        </div>
+
+        <div class="projects-grid-3" id="home-projects-list">
+          <!-- Diisi otomatis oleh JS -->
+        </div>
+
+        <div class="text-right margin-top-md">
+          <button class="btn-text-icon" onclick="switchView('browse')">Lihat semua proyek &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. CARI PROYEK VIEW -->
+    <section id="view-browse" class="view-section">
+      <div class="container">
+        <div class="filter-box-card">
+          <div class="filter-header">
+            <div>
+              <h1 class="page-title">Daftar Semua Proyek</h1>
+              <p class="page-sub">Gunakan pencarian dan filter untuk menemukan proyek yang kamu isi.</p>
+            </div>
+            <div class="filter-actions">
+              <button class="btn-outline-sm" onclick="resetFilters()">Reset filter</button>
+            </div>
+          </div>
+
+          <div class="filter-inputs-grid">
+            <div class="form-group mb-0">
+              <label class="form-label-sm">Cari kata kunci</label>
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-keyword" class="form-control" placeholder="Cari judul atau deskripsi..." oninput="renderBrowseProjects()">
+              </div>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label-sm">Kategori</label>
+              <select class="form-control" id="category-filter" onchange="renderBrowseProjects()">
+                <option value="semua">Semua kategori</option>
+                <option value="Desain">Desain</option>
+                <option value="Sosmed">Sosmed</option>
+                <option value="Tulisan">Tulisan</option>
+                <option value="Video">Video</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="projects-grid-3 margin-top-lg" id="browse-projects-list">
+          <!-- Diisi otomatis oleh JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PASANG PROYEK VIEW (KHUSUS KLIEN) -->
+    <section id="view-post" class="view-section">
+      <div class="container flex-center">
+        <div class="post-project-card">
+          <h1 class="post-title">Posting Proyek Baru</h1>
+          <p class="post-sub">Hanya akun Klien yang dapat memasukkan proyek pekerjaan baru.</p>
+
+          <form id="post-project-form" onsubmit="handlePostProject(event)">
+            <div class="form-group">
+              <label class="form-label">Nama Klien / Pembuat Proyek *</label>
+              <input type="text" id="post-client" class="form-control" placeholder="Nama Klien / Brand Anda" required readonly style="background-color: #F3F4F6;">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Judul proyek pekerjaan *</label>
+              <input type="text" id="post-title" class="form-control" placeholder="Contoh: Desain Kemasan Produk Makanan" required>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+              <label class="form-label">Kategori (Bisa pilih lebih dari satu) *</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label"><input type="checkbox" class="cat-checkbox" value="Desain"> Desain</label>
+                  <label class="checkbox-label"><input type="checkbox" class="cat-checkbox" value="Sosmed"> Sosmed</label>
+                  <label class="checkbox-label"><input type="checkbox" class="cat-checkbox" value="Tulisan"> Tulisan</label>
+                  <label class="checkbox-label"><input type="checkbox" class="cat-checkbox" value="Video"> Video</label>
+              </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Deadline / Tenggat *</label>
+                <input type="text" id="post-deadline" class="form-control" placeholder="Contoh: 3 Hari" required>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Budget minimal (Rp) *</label>
+                <input type="number" id="post-budget-min" class="form-control" placeholder="Contoh: 100000" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Budget maksimal (Rp) *</label>
+                <input type="number" id="post-budget-max" class="form-control" placeholder="Contoh: 250000" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Deskripsi & brief pekerjaan *</label>
+              <textarea id="post-desc" class="form-control textarea-lg" placeholder="Jelaskan rincian proyek secara detail..." required></textarea>
+            </div>
+
+            <div class="form-actions-row">
+              <button type="submit" class="btn btn-coral btn-lg flex-1">Simpan & Publikasikan</button>
+              <button type="button" class="btn btn-navy btn-lg" onclick="switchView('home')">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DETAIL PROYEK VIEW -->
+    <section id="view-detail" class="view-section">
+      <div class="container flex-center">
+        <div class="detail-project-card">
+          <div class="back-link" onclick="switchView('browse')">&larr; Kembali ke daftar proyek</div>
+
+          <div class="detail-header-row">
+            <span class="badge-category" id="detail-category">Kategori</span>
+            <span class="badge-status-red" id="detail-status">Buka penawaran</span>
+          </div>
+
+          <h1 class="detail-main-title" id="detail-title">Judul Proyek</h1>
+          <p class="detail-creator">Dibuat oleh: <span id="detail-client">Nama Klien</span></p>
+
+          <div class="detail-stats-box">
+            <div class="stat-item">
+              <span class="stat-lbl">Budget</span>
+              <span class="stat-val" id="detail-budget">Rp 0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-lbl">Tenggat</span>
+              <span class="stat-val" id="detail-deadline">-</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-lbl">Total penawaran</span>
+              <span class="stat-val" id="detail-bids-count">0 Penawaran</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3 class="detail-sec-title">Deskripsi / Brief Pekerjaan</h3>
+            <p id="detail-description">Detail deskripsi proyek akan muncul di sini.</p>
+          </div>
+
+          <hr class="divider">
+
+          <!-- Form Penawaran Proposal (Khusus Freelancer) -->
+          <div class="detail-section" id="freelancer-bid-section">
+            <h3 class="detail-sec-title">Kirim Penawaran (Proposal Freelancer)</h3>
+            <form onsubmit="handlePostBid(event)">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label-sm">Nama Freelancer *</label>
+                  <input type="text" id="bid-freelancer-name" class="form-control" placeholder="Nama Anda" required readonly style="background-color: #F3F4F6;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label-sm">Harga Penawaran (Rp) *</label>
+                  <input type="number" id="bid-price" class="form-control" placeholder="Contoh: 150000" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label-sm">Pesan Proposal / Catatan *</label>
+                <textarea id="bid-proposal" class="form-control" placeholder="Tulis penawaran kamu..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-coral">Kirim Penawaran Ini</button>
+            </form>
+          </div>
+
+          <!-- Peringatan Pembatasan Akses Klien/Guest -->
+          <div class="info-alert-card" id="bid-restricted-info" style="display: none;">
+            🔒 <span id="bid-restricted-msg">Hanya akun <strong>Freelancer</strong> yang dapat mengirim proposal penawaran pada proyek ini.</span>
+          </div>
+
+          <!-- Tombol Aksi Proyek (Tandai Selesai & Batalkan Freelancer) -->
+<div class="action-btn-group" id="project-action-buttons" style="display:none;">
+    <button class="btn btn-coral btn-sm" id="btn-complete-project"> Tandai Proyek Selesai</button>
+    <button class="btn-cancel" id="btn-cancel-freelancer"> Batalkan Freelancer</button>
+</div>
+
+          <div class="detail-section margin-top-lg">
+            <h3 class="detail-sec-title">Daftar Penawaran Masuk</h3>
+            <div id="project-bids-list">
+              <!-- Diisi otomatis oleh JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. DASHBOARD KLIEN VIEW -->
+    <section id="view-dashboard-klien" class="view-section">
+      <div class="container">
+        <div class="profile-card">
+          <div class="profile-main">
+            <div class="avatar-circle lg-avatar coral-avatar">KL</div>
+            <div>
+              <h1 class="profile-name" id="dash-client-name">Dashboard Klien</h1>
+              <p class="profile-bio">Kelola proyek yang pernah kamu buat dan pantau proposal yang masuk dari freelancer.</p>
+            </div>
+          </div>
+          <button class="btn btn-coral btn-lg" onclick="switchView('post')">Posting Proyek Baru</button>
+        </div>
+
+        <div class="dashboard-section-card">
+          <h2 class="dash-sec-title mb-md">Daftar Proyek Saya</h2>
+          <div id="client-projects-list">
+            <!-- Diisi otomatis oleh JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DASHBOARD FREELANCER VIEW -->
+    <section id="view-dashboard-freelancer" class="view-section">
+      <div class="container">
+        <div class="profile-card">
+          <div class="profile-main">
+            <div class="avatar-circle lg-avatar navy-avatar">FL</div>
+            <div>
+              <h1 class="profile-name" id="dash-freelancer-name">Dashboard Freelancer</h1>
+              <p class="profile-bio">Pantau status proposal penawaran proyek yang pernah kamu kirimkan.</p>
+            </div>
+          </div>
+          <button class="btn btn-coral" onclick="switchView('browse')">Cari Proyek Baru</button>
+        </div>
+
+        <div class="dashboard-section-card">
+          <h2 class="dash-sec-title mb-md">Daftar Penawaran Proposal Saya</h2>
+          <div id="freelancer-bids-list">
+            <!-- Diisi otomatis oleh JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. DASHBOARD ADMIN VIEW -->
+    <section id="view-dashboard-admin" class="view-section">
+      <div class="container">
+        <div class="admin-header-card">
+          <div>
+            <h1 class="admin-title">Panel Kontrol Admin (Database System)</h1>
+            <p class="admin-sub">Kelola pengguna, moderasi proyek, dan pantau seluruh aktivitas platform.</p>
+          </div>
+          <button class="btn btn-coral btn-sm" onclick="clearAllData()">Hapus Semua Data & Reset</button>
+        </div>
+
+        <!-- Tabel Data Pengguna -->
+        <div class="dashboard-section-card margin-top-lg">
+          <h2 class="dash-sec-title mb-md">Tabel Data Pengguna (Users)</h2>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nama Lengkap</th>
+                  <th>Email</th>
+                  <th>Peran</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-user-table">
+                <!-- Diisi otomatis oleh JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabel Data Proyek -->
+        <div class="dashboard-section-card margin-top-lg">
+          <h2 class="dash-sec-title mb-md">Tabel Data Proyek (Projects)</h2>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Judul Proyek</th>
+                  <th>Kategori</th>
+                  <th>Client</th>
+                  <th>Budget Max</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-project-table">
+                <!-- Diisi otomatis oleh JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AUTH MODALS OVERLAY -->
+  <div class="modal-overlay" id="auth-modal" onclick="closeModalOnOverlay(event)">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+
+      <!-- LOGIN MODAL (KHUSUS MASUK DENGAN ROLE SELECTOR) -->
+      <div id="modal-content-login" class="modal-view">
+        <h2 class="modal-title">Masuk ke Akun</h2>
+        <p class="modal-sub">Masukkan email, password, dan pilih peran akun yang sudah terdaftar.</p>
+
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label class="form-label-sm">Login Sebagai *</label>
+            <select id="login-role" class="form-control" required>
+              <option value="Klien">Klien (UMKM / Pembuat Proyek)</option>
+              <option value="Freelancer">Freelancer (Pencari Kerja)</option>
+              <option value="Admin">Admin Sistem</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-sm">Email *</label>
+            <input type="email" id="login-email" class="form-control" placeholder="nama@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-sm">Password *</label>
+            <input type="password" id="login-password" class="form-control" placeholder="Masukkan password" required>
+          </div>
+
+          <button type="submit" class="btn btn-coral w-100 btn-lg margin-top-md">Masuk Sekarang</button>
+        </form>
+
+        <div class="modal-footer-text">
+          Belum punya akun? <span class="text-coral-bold cursor-pointer" onclick="openModal('register-klien')">Daftar Akun Baru</span>
+        </div>
+      </div>
+
+      <!-- REGISTER KLIEN MODAL -->
+      <div id="modal-content-register-klien" class="modal-view">
+        <h2 class="modal-title">Daftar Akun Klien (UMKM)</h2>
+        <p class="modal-sub">Daftar sebagai Klien untuk memposting proyek pekerjaan digital.</p>
+
+        <div class="role-selector">
+          <button class="role-btn active" onclick="openModal('register-klien')">Klien (UMKM)</button>
+          <button class="role-btn" onclick="openModal('register-freelancer')">Freelancer</button>
+        </div>
+
+        <form onsubmit="handleRegisterSubmit(event, 'Klien')">
+          <div class="form-group">
+            <label class="form-label-sm">Nama Lengkap / Usaha *</label>
+            <input type="text" class="form-control reg-fullname" placeholder="Contoh: Siti Rahma / Kopi Janji Kita" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-sm">Email *</label>
+            <input type="email" class="form-control reg-email" placeholder="nama@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-sm">Password *</label>
+            <input type="password" class="form-control reg-password" placeholder="Minimal 6 karakter" minlength="6" required>
+          </div>
+
+          <button type="submit" class="btn btn-coral w-100 btn-lg margin-top-md">Daftar Akun Klien</button>
+        </form>
+
+        <div class="modal-footer-text">
+          Sudah punya akun? <span class="text-coral-bold cursor-pointer" onclick="openModal('login')">Masuk di sini</span>
+        </div>
+      </div>
+
+      <!-- REGISTER FREELANCER MODAL -->
+      <div id="modal-content-register-freelancer" class="modal-view">
+        <h2 class="modal-title">Daftar Akun Freelancer</h2>
+        <p class="modal-sub">Daftar sebagai Freelancer untuk mencari proyek dan mengumpulkan cuan.</p>
+
+        <div class="role-selector">
+          <button class="role-btn" onclick="openModal('register-klien')">Klien (UMKM)</button>
+          <button class="role-btn active" onclick="openModal('register-freelancer')">Freelancer</button>
+        </div>
+
+        <form onsubmit="handleRegisterSubmit(event, 'Freelancer')">
+          <div class="form-group">
+            <label class="form-label-sm">Nama Lengkap *</label>
+            <input type="text" class="form-control reg-fullname" placeholder="Contoh: Budi Kurniawan" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-sm">Email *</label>
+            <input type="email" class="form-control reg-email" placeholder="nama@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-sm">Password *</label>
+            <input type="password" class="form-control reg-password" placeholder="Minimal 6 karakter" minlength="6" required>
+          </div>
+
+          <button type="submit" class="btn btn-coral w-100 btn-lg margin-top-md">Daftar Akun Freelancer</button>
+        </form>
+
+        <div class="modal-footer-text">
+          Sudah punya akun? <span class="text-coral-bold cursor-pointer" onclick="openModal('login')">Masuk di sini</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
